@@ -1,0 +1,2 @@
+# kaldi-kit
+Kaldi scripts
