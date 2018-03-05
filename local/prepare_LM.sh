@@ -1,15 +1,23 @@
 #!/bin/bash
 
+if [ $# != 5 ]; then
+
+  echo "You're doing this wrong"
+  exit 1;
+fi
+
 . ./path.sh || exit 1
 . ./cmd.sh || exit 1
 
 nj=1       # number of parallel jobs - 1 is perfect for such a small data set
 
+language=$1
+comtype=$2
+marking=$3
+str_alp="$(echo $4 | sed 's/\./_/')"
+str_D="$(echo $5 | sed 's/\./_/')"
 
-lm_src=/teamwork/t40511_asr/p/sami/lmdata/sme/wikipedia_10k.txt
-arch_dir=/l/jpleino1/temp/sami_archives
-lm_dir=/l/jpleino1/kaldi-trunk/egs/sami/data/local/lm
-lang_dir=/teamwork/t40511_asr/p/sami/langdata
+langdir=/scratch/elec/puhe/p/sami/langdata/kaldi/${language}/subword_dict
 
 
 # Safety mechanism (possible running this script with modified arguments)
@@ -17,49 +25,48 @@ lang_dir=/teamwork/t40511_asr/p/sami/langdata
 [[ $# -ge 1 ]] && { echo "Wrong arguments!"; exit 1; }
 
 
-# Getting the phonemes
-mkdir data/dict data/lang data/lang/local \
-data/subword_wb_dict data/subword_wb_lang data/subword_wb_lang/local \
-data/subword_lr_dict data/subword_lr_lang data/subword_lr_lang/local \
-data/subword_l_dict data/subword_l_lang data/subword_l_lang/local \
-data/subword_r_dict data/subword_r_lang data/subword_r_lang/local
+# Prepapring folders
+mkdir data/langs_${comtype} data/dicts_${comtype}
+mkdir data/langs_${comtype}/subword_${marking}_langs data/dicts_${comtype}/subword_${marking}_dicts
+mkdir data/langs_${comtype}/subword_${marking}_langs/a_${str_alp}
+mkdir data/langs_${comtype}/subword_${marking}_langs/a_${str_alp}/local
+mkdir data/dicts_${comtype}/subword_${marking}_dicts/a_${str_alp}
+mkdir data/langs_${comtype}/subword_${marking}_langs/a_${str_alp}/Gfsts
 
 
+
+dir=data/langs_${comtype}/subword_${marking}_langs/a_${str_alp}
+tmpdir=data/langs_${comtype}/subword_${marking}_langs/a_${str_alp}/local
+lexdir=data/dicts_${comtype}/subword_${marking}_dicts/a_${str_alp}
+
+# Copying phones and lexicon
+cp ${langdir}/* ${lexdir}
+cp ../${language}_LMs/dicts_${comtype}/subword_${marking}_dicts/a_${str_alp}/lexicon.txt \
+${lexdir}
 echo
 echo "===== PREPARING LANGUAGE DATA ====="
 echo
 
 extra=3
 
-utils/prepare_lang.sh --num-extra-phone-disambig-syms $extra data/subword_wb_dict "<UNK>" data/subword_wb_lang/local data/subword_wb_lang
+
+utils/prepare_lang.sh --num-extra-phone-disambig-syms $extra \
+${lexdir} "<UNK>" ${tmpdir} ${dir} 
 
 
-
-dir_wb=data/subword_wb_lang
-tmpdir_wb=data/subword_wb_lang/local
 
 # Overwrite L_disambig.fst
-local/make_lfst_wb.py $(tail -n$extra $dir_wb/phones/disambig.txt) < $tmpdir_wb/lexiconp_disambig.txt | fstcompile --isymbols=$dir_wb/phones.txt --osymbols=$dir_wb/words.txt --keep_isymbols=false --keep_osymbols=false | fstaddselfloops  $dir_wb/phones/wdisambig_phones.int $dir_wb/phones/wdisambig_words.int | fstarcsort --sort_type=olabel > $dir_wb/L_disambig.fst
-
-local/make_lfst_lr.py $(tail -n$extra $dir_lr/phones/disambig.txt) < $tmpdir_lr/lexiconp_disambig.txt | fstcompile --isymbols=$dir_lr/phones.txt --osymbols=$dir_lr/words.txt --keep_isymbols=false --keep_osymbols=false | fstaddselfloops  $dir_lr/phones/wdisambig_phones.int $dir_lr/phones/wdisambig_words.int | fstarcsort --sort_type=olabel > $dir_lr/L_disambig.fst 
-
-
+local/make_lfst_${marking}.py $(tail -n$extra $dir/phones/disambig.txt) < $tmpdir/lexiconp_disambig.txt | fstcompile --isymbols=$dir/phones.txt --osymbols=$dir/words.txt --keep_isymbols=false --keep_osymbols=false | fstaddselfloops  $dir/phones/wdisambig_phones.int $dir/phones/wdisambig_words.int | fstarcsort --sort_type=olabel > $dir/L_disambig.fst
 
 echo
 echo "===== MAKING G.fst ====="
 echo
 
-utils/format_lm.sh data/subword_wb_lang $lm_dir/sami_varikn_lm10_wb.lm.gz data/subword_wb_dict/lexicon.txt data/lang_test
-mv data/lang_test/G.fst data/subword_wb_lang
-rm -rf data/lang_test
-
-
-echo
-echo "===== TRI1 DECODING USING SUBWORDS WITH WORD BOUNDARIES ====="
-echo
-
-utils/mkgraph.sh data/subword_wb_lang exp/tri1 exp/tri1/graph_wb || exit 1
-steps/decode.sh --config conf/decode.config --nj $nj --cmd "$decode_cmd" exp/tri1/graph_wb data/eval exp/tri1/decode_wb
+utils/format_lm.sh $dir ../${language}_LMs/LMs_${comtype}/${language}_varikn_lm10_${marking}_a${str_alp}_D${str_D}.lm.gz $lexdir/lexicon.txt \
+data/langs_${comtype}/subword_${marking}_langs/a_${str_alp}_test
+mv data/langs_${comtype}/subword_${marking}_langs/a_${str_alp}_test/G.fst $dir/Gfsts/G_a${str_alp}_D${str_D}.fst
+ln -s Gfsts/G_a${str_alp}_D${str_D}.fst $dir/G.fst
+rm -rf data/langs_${comtype}/subword_${marking}_langs/a_${str_alp}_test
 
 echo
 echo "===== run.sh script is finished ====="

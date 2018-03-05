@@ -1,5 +1,7 @@
 ln -s ${PWD}/local /scratch/work/jpleino1/kaldi-trunk/egs/sme_LMs/local
 ln -s ${PWD}/local /scratch/work/jpleino1/kaldi-trunk/egs/sme_F/local
+ln -s ${PWD}/conf /scratch/work/jpleino1/kaldi-trunk/egs/sme_F/conf
+ln -s ${PWD}/conf /scratch/work/jpleino1/kaldi-trunk/egs/sme_LMs/conf
 
 ln -s ${PWD}/cmd_AM_sme_F.sh /scratch/work/jpleino1/kaldi-trunk/egs/sme_F/cmd.sh
 ln -s ${PWD}/path_AM_sme_F.sh /scratch/work/jpleino1/kaldi-trunk/egs/sme_F/path.sh
