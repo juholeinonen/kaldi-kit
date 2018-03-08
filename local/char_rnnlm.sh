@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 #SBATCH --partition gpu
-#SBATCH --time=02-00
+#SBATCH --time=4:00
 #SBATCH --gres=gpu:teslap100:1
 #SBATCH --mem=10G
 #SBATCH -o /scratch/work/jpleino1/log/char-rnnlm-%j.log
@@ -26,7 +26,7 @@ theanolm version
 source "/scratch/work/jpleino1/kaldi-trunk/egs/sme_LMs/local/configure-theano.sh"
 
 theanolm train \
-  model_t.h5 \
+  model.h5 \
   --training-set corpora_rnnlm/char_corpus_variKN.txt \
   --validation-file corpora_rnnlm/char_variKN_discount.txt \
   --architecture lstm1500 \

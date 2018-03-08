@@ -102,9 +102,8 @@ if [ $stage -le 12 ]; then
   # the first splicing is moved before the lda layer, so no splicing here
   relu-renorm-layer name=tdnn1 dim=650
   relu-renorm-layer name=tdnn2 dim=650 input=Append(-1,0,1)
-  relu-renorm-layer name=tdnn3 dim=650 input=Append(-1,0,1)
-  relu-renorm-layer name=tdnn4 dim=650 input=Append(-3,0,3)
-  relu-renorm-layer name=tdnn5 dim=650 input=Append(-6,-3,0)
+  relu-renorm-layer name=tdnn3 dim=650 input=Append(-3,0,3)
+  relu-renorm-layer name=tdnn4 dim=650 input=Append(-6,-3,0)
   output-layer name=output dim=$num_targets max-change=1.5
 EOF
   steps/nnet3/xconfig_to_configs.py --xconfig-file $dir/configs/network.xconfig --config-dir $dir/configs/
@@ -151,17 +150,12 @@ if [ $stage -le 14 ]; then
     (
       data_affix=$(echo $data | sed s/test_//)
       nj=$(wc -l <data/${data}_hires/spk2utt)
-      for lmtype in word_TW; do
+      for lmtype in ones_wb_a0_2_D0_0002_opt_hyper_5; do
         graph_dir=$nnet_lm_dir
         steps/nnet3/decode.sh --nj $nj --cmd "$decode_cmd"  --num-threads 4 \
            --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_${data}_hires \
           ${graph_dir} data/${data}_hires ${dir}/decode_${lmtype}_${data_affix} || exit 1
       done
-#      steps/lmrescore.sh --cmd "$decode_cmd" data/lang_test_{tgpr,tg} \
-#        data/${data}_hires ${dir}/decode_{tgpr,tg}_${data_affix} || exit 1
-#      steps/lmrescore_const_arpa.sh --cmd "$decode_cmd" \
-#        data/lang_test_bd_{tgpr,fgconst} \
-#       data/${data}_hires ${dir}/decode_${lmtype}_${data_affix}{,_fg} || exit 1
     ) || touch $dir/.error &
   done
   wait

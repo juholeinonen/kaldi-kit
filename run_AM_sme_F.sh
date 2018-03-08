@@ -163,7 +163,7 @@ steps/decode_fmllr.sh --config conf/decode.config --nj $nj --cmd "$decode_cmd" e
 ### NNET3 parameters ######
 ###########################
 test_sets="dev"
-nnet_lm_dir=/scratch/work/jpleino1/kaldi-trunk/egs/${speaker}/exp/tri3b/graph
+nnet_lm_dir=/scratch/work/jpleino1/kaldi-trunk/egs/${speaker}/exp/tri3b/graph_ones_wb_a0_2_D0_0002
 tdnn_affix=1a
 max_param_change=2.0
 num_epochs=3
@@ -176,6 +176,28 @@ echo "===== TDNN TRAINING ====="
 echo
 
 local/nnet3/run_tdnn.sh --stage 0 $test_sets $nnet_lm_dir $tdnn_affix $max_param_change $num_epochs $train_samples_per_iter $init_lrate $final_lrate
+utils/mkgraph.sh $dir exp/tri3b exp/tri3b/graph_${comtype}_${marking}_a${str_alp}_D${str_D}
+
+tdnn_affix=1a
+local/nnet3/run_tdnn.sh --stage 14 $test_sets $nnet_lm_dir $tdnn_affix $max_param_change $num_epochs $train_samples_per_iter $init_lrate $final_lrate
+
+tdnn_affix=1a_2layers
+local/nnet3/run_tdnn.sh --stage 14 $test_sets $nnet_lm_dir $tdnn_affix $max_param_change $num_epochs $train_samples_per_iter $init_lrate $final_lrate
+
+tdnn_affix=1a_3layers
+local/nnet3/run_tdnn.sh --stage 14 $test_sets $nnet_lm_dir $tdnn_affix $max_param_change $num_epochs $train_samples_per_iter $init_lrate $final_lrate
+
+tdnn_affix=1a_4layers
+local/nnet3/run_tdnn.sh --stage 14 $test_sets $nnet_lm_dir $tdnn_affix $max_param_change $num_epochs $train_samples_per_iter $init_lrate $final_lrate
+
+tdnn_affix=1a_lr_314
+local/nnet3/run_tdnn.sh --stage 14 $test_sets $nnet_lm_dir $tdnn_affix $max_param_change $num_epochs $train_samples_per_iter $init_lrate $final_lrate
+
+tdnn_affix=1a_mpc_3
+local/nnet3/run_tdnn.sh --stage 14 $test_sets $nnet_lm_dir $tdnn_affix $max_param_change $num_epochs $train_samples_per_iter $init_lrate $final_lrate
+
+tdnn_affix=1a_ne_5
+local/nnet3/run_tdnn.sh --stage 14 $test_sets $nnet_lm_dir $tdnn_affix $max_param_change $num_epochs $train_samples_per_iter $init_lrate $final_lrate
 
 echo
 echo "===== run.sh script is finished ====="

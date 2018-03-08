@@ -22,8 +22,9 @@ langdir=/scratch/elec/puhe/p/sami/langdata/kaldi/${language}/subword_dict
 
 # Safety mechanism (possible running this script with modified arguments)
 . utils/parse_options.sh || exit 1
-[[ $# -ge 1 ]] && { echo "Wrong arguments!"; exit 1; }
-
+#[[ $# -ge 1 ]] && { echo "Wrong arguments!"; exit 1; }
+[ -f path.sh ] && . ./path.sh #source the path.
+. parse_options.sh || exit 1;
 
 # Prepapring folders
 mkdir data/langs_${comtype} data/dicts_${comtype}
