@@ -10,7 +10,7 @@ nj=1       # number of parallel jobs - 1 is perfect for such a small data set
 ##################################################################
 markings=(wb lr l r)
 alphas=(0.05 0.2 0.5 1 1.5)
-language=sme
+language=fin
 gender=F
 speaker="${language}_$gender"
 lm_corpus=wikipedia_small.txt
@@ -23,7 +23,7 @@ lang_dir=/scratch/elec/puhe/p/sami/langdata/kaldi/$language
 
 if [ $gender = "F" ]
 then 
-	name_length=12
+	name_length=21
 else
 	name_length=11
 fi
@@ -79,7 +79,7 @@ echo
 
 
 # Building and pruning a word model
-local/run_SRILM.sh $lm_dir
+#local/run_SRILM.sh $lm_dir
 local/lexicon.py $lm_dir/corpus.txt
 mv lexicon.txt data/dict
 
@@ -94,7 +94,7 @@ utils/prepare_lang.sh data/dict "<UNK>" data/lang/local data/lang
 
 #utils/format_lm_sri.sh data/lang $lm_dir/kaldi_srilm-prune=5e10.4bo data/lang_test
 #mv data/lang_test/G.fst data/lang
-rm -rf data/lang_test
+#rm -rf data/lang_test
 
 echo
 echo "===== MONO TRAINING ====="
@@ -106,8 +106,8 @@ echo
 echo "===== MONO DECODING ====="
 echo
 
-utils/mkgraph.sh --mono data/lang exp/mono exp/mono/graph || exit 1
-steps/decode.sh --config conf/decode.config --nj $nj --cmd "$decode_cmd" exp/mono/graph data/eval exp/mono/decode
+#utils/mkgraph.sh --mono data/lang exp/mono exp/mono/graph || exit 1
+#steps/decode.sh --config conf/decode.config --nj $nj --cmd "$decode_cmd" exp/mono/graph data/eval exp/mono/decode
 
 echo
 echo "===== MONO ALIGNMENT ====="
@@ -125,8 +125,8 @@ echo
 echo "===== TRI1 (first triphone pass) DECODING ====="
 echo
 
-utils/mkgraph.sh data/lang exp/tri1 exp/tri1/graph || exit 1
-steps/decode.sh --config conf/decode.config --nj $nj --cmd "$decode_cmd" exp/tri1/graph data/eval exp/tri1/decode
+#utils/mkgraph.sh data/lang exp/tri1 exp/tri1/graph || exit 1
+#steps/decode.sh --config conf/decode.config --nj $nj --cmd "$decode_cmd" exp/tri1/graph data/eval exp/tri1/decode
 
 echo
 echo "===== TRI1 ALIGNMENT ====="
@@ -156,8 +156,8 @@ echo
 echo "===== TRI3b (LDA+MLLT+SAT) DECODING  ====="
 echo
 
-utils/mkgraph.sh data/lang exp/tri3b exp/tri3b/graph || exit 1
-steps/decode_fmllr.sh --config conf/decode.config --nj $nj --cmd "$decode_cmd" exp/tri3b/graph data/eval exp/tri3b/decode
+#utils/mkgraph.sh data/lang exp/tri3b exp/tri3b/graph || exit 1
+#steps/decode_fmllr.sh --config conf/decode.config --nj $nj --cmd "$decode_cmd" exp/tri3b/graph data/eval exp/tri3b/decode
 
 ###########################
 ### NNET3 parameters ######
@@ -175,29 +175,8 @@ echo
 echo "===== TDNN TRAINING ====="
 echo
 
-local/nnet3/run_tdnn.sh --stage 0 $test_sets $nnet_lm_dir $tdnn_affix $max_param_change $num_epochs $train_samples_per_iter $init_lrate $final_lrate
-utils/mkgraph.sh $dir exp/tri3b exp/tri3b/graph_${comtype}_${marking}_a${str_alp}_D${str_D}
-
-tdnn_affix=1a
-local/nnet3/run_tdnn.sh --stage 14 $test_sets $nnet_lm_dir $tdnn_affix $max_param_change $num_epochs $train_samples_per_iter $init_lrate $final_lrate
-
-tdnn_affix=1a_2layers
-local/nnet3/run_tdnn.sh --stage 14 $test_sets $nnet_lm_dir $tdnn_affix $max_param_change $num_epochs $train_samples_per_iter $init_lrate $final_lrate
-
-tdnn_affix=1a_3layers
-local/nnet3/run_tdnn.sh --stage 14 $test_sets $nnet_lm_dir $tdnn_affix $max_param_change $num_epochs $train_samples_per_iter $init_lrate $final_lrate
-
-tdnn_affix=1a_4layers
-local/nnet3/run_tdnn.sh --stage 14 $test_sets $nnet_lm_dir $tdnn_affix $max_param_change $num_epochs $train_samples_per_iter $init_lrate $final_lrate
-
-tdnn_affix=1a_lr_314
-local/nnet3/run_tdnn.sh --stage 14 $test_sets $nnet_lm_dir $tdnn_affix $max_param_change $num_epochs $train_samples_per_iter $init_lrate $final_lrate
-
-tdnn_affix=1a_mpc_3
-local/nnet3/run_tdnn.sh --stage 14 $test_sets $nnet_lm_dir $tdnn_affix $max_param_change $num_epochs $train_samples_per_iter $init_lrate $final_lrate
-
-tdnn_affix=1a_ne_5
-local/nnet3/run_tdnn.sh --stage 14 $test_sets $nnet_lm_dir $tdnn_affix $max_param_change $num_epochs $train_samples_per_iter $init_lrate $final_lrate
+#local/nnet3/run_tdnn.sh --stage 0 $test_sets $nnet_lm_dir $tdnn_affix $max_param_change $num_epochs $train_samples_per_iter $init_lrate $final_lrate
+#utils/mkgraph.sh $dir exp/tri3b exp/tri3b/graph_${comtype}_${marking}_a${str_alp}_D${str_D}
 
 echo
 echo "===== run.sh script is finished ====="

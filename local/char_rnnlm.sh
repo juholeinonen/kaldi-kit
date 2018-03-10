@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 #SBATCH --partition gpu
-#SBATCH --time=4:00
+#SBATCH --time=12:00:00
 #SBATCH --gres=gpu:teslap100:1
 #SBATCH --mem=10G
 #SBATCH -o /scratch/work/jpleino1/log/char-rnnlm-%j.log

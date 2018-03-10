@@ -150,7 +150,7 @@ if [ $stage -le 14 ]; then
     (
       data_affix=$(echo $data | sed s/test_//)
       nj=$(wc -l <data/${data}_hires/spk2utt)
-      for lmtype in ones_wb_a0_2_D0_0002_opt_hyper_5; do
+      for lmtype in ones_wb_a0_2_D0_0002_opt_hyper_8; do
         graph_dir=$nnet_lm_dir
         steps/nnet3/decode.sh --nj $nj --cmd "$decode_cmd"  --num-threads 4 \
            --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_${data}_hires \
