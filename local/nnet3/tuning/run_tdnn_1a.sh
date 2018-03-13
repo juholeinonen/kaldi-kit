@@ -35,7 +35,7 @@ nnet3_affix=       # affix for exp dirs, e.g. it was _cleaned in tedlium.
 # Options which are not passed through to run_ivector_common.sh
 
 train_stage=-10
-remove_egs=true
+remove_egs=false
 srand=0
 reporting_email=
 # set common_egs_dir to use previously dumped egs.
@@ -102,8 +102,9 @@ if [ $stage -le 12 ]; then
   # the first splicing is moved before the lda layer, so no splicing here
   relu-renorm-layer name=tdnn1 dim=650
   relu-renorm-layer name=tdnn2 dim=650 input=Append(-1,0,1)
-  relu-renorm-layer name=tdnn3 dim=650 input=Append(-3,0,3)
-  relu-renorm-layer name=tdnn4 dim=650 input=Append(-6,-3,0)
+  relu-renorm-layer name=tdnn3 dim=650 input=Append(-1,0,1)
+  relu-renorm-layer name=tdnn4 dim=650 input=Append(-3,0,3)
+  relu-renorm-layer name=tdnn5 dim=650 input=Append(-6,-3,0)
   output-layer name=output dim=$num_targets max-change=1.5
 EOF
   steps/nnet3/xconfig_to_configs.py --xconfig-file $dir/configs/network.xconfig --config-dir $dir/configs/
@@ -150,7 +151,7 @@ if [ $stage -le 14 ]; then
     (
       data_affix=$(echo $data | sed s/test_//)
       nj=$(wc -l <data/${data}_hires/spk2utt)
-      for lmtype in ones_wb_a0_2_D0_0002_opt_hyper_8; do
+      for lmtype in ones_wb_a0_5_D0_00001_cutoff_4zeros; do
         graph_dir=$nnet_lm_dir
         steps/nnet3/decode.sh --nj $nj --cmd "$decode_cmd"  --num-threads 4 \
            --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_${data}_hires \
