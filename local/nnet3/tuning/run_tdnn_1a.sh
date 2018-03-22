@@ -47,6 +47,7 @@ common_egs_dir=
 
 #own additions
 test_sets=$1
+test_sets="dev eval dev_sme_"$test_sets" eval_sme_"$test_sets""
 nnet_lm_dir=$2
 tdnn_affix=$3  #affix for TDNN directory e.g. "1a" or "1b", in case we change the configuration.
 max_param_change=$4
@@ -54,7 +55,9 @@ num_epochs=$5
 train_samples_per_iter=$6
 init_lrate=$7
 final_lrate=$8
-
+echo "$test_sets"
+echo "$nnet_lm_dir"
+echo "$tdnn_affix"
 if ! cuda-compiled; then
   cat <<EOF && exit 1
 This script is intended to be used with GPUs but you have not compiled Kaldi with CUDA
@@ -151,7 +154,7 @@ if [ $stage -le 14 ]; then
     (
       data_affix=$(echo $data | sed s/test_//)
       nj=$(wc -l <data/${data}_hires/spk2utt)
-      for lmtype in ones_wb_a0_5_D0_00001_cutoff_4zeros; do
+      for lmtype in wb_best; do
         graph_dir=$nnet_lm_dir
         steps/nnet3/decode.sh --nj $nj --cmd "$decode_cmd"  --num-threads 4 \
            --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_${data}_hires \

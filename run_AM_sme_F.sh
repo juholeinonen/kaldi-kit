@@ -23,7 +23,7 @@ lang_dir=/scratch/elec/puhe/p/sami/langdata/kaldi/$language
 
 if [ $gender = "F" ]
 then 
-	name_length=21
+	name_length=12
 else
 	name_length=11
 fi

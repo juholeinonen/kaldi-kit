@@ -21,7 +21,7 @@ cp $wiki $pre_corpus
 sed -i 's/\.//g' $pre_corpus
 sed -i "s/'//g" $pre_corpus
 
-cp $src_dir/train_9000.trn $train_cp
+cp $src_dir/train_300.trn $train_cp
 cp $src_dir/eval.trn $eval_cp
 cp $src_dir/devel200.trn $dev_cp
 
