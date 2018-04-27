@@ -32,6 +32,7 @@ fi
 echo
 echo "===== TRAINING MORFESSOR ====="
 echo
+mkdir Morfessor_${comtype}
 if ! [ -f Morfessor_${comtype}/model_alp_${str_alp}.bin ]; then
 	morfessor-train --encoding=utf-8 --logfile=Morfessor_${comtype}/log_${str_alp}.log --corpusweight=$alpha -s Morfessor_${comtype}/model_alp_${str_alp}.bin -d ${comtype} corpora_${comtype}/corpus_variKN.txt
 fi
