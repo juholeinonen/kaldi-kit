@@ -75,28 +75,28 @@ for marking in ${markings[@]}; do
 			str_D="$(echo $D | sed 's/\./_/')"
 			if [ $marking = "wb" ]; then
 				str_D="$(echo $D | sed 's/\./_/')"
-				perplexity -a LMs_{$comtype}/${language}_varikn_lm10_${marking}_a${str_alp}_D${str_D}.lm.gz \
-				-W wb.txt -t 2 LMs_{$comtype}/perplexeties/devsets/corpus_seg_${marking}_a${str_alp}.txt \
-				LMs_{$comtype}/perplexeties/scores/scores_corpus_${marking}_a${str_alp}_D${str_D}.txt
-				perplexity -a LMs_{$comtype}/${language}_varikn_lm10_${marking}_a${str_alp}_D${str_D}.lm.gz \
-				-W wb.txt -t 2 LMs_{$comtype}/perplexeties/devsets/dev_corpus_${marking}_a${str_alp}.txt \
-				LMs_{$comtype}/perplexeties/scores/scores_dev_${marking}_a${str_alp}_D${str_D}.txt
+				perplexity -a LMs_${comtype}/${language}_varikn_lm10_${marking}_a${str_alp}_D${str_D}.lm.gz \
+				-W wb.txt -t 2 LMs_${comtype}/perplexeties/devsets/corpus_seg_${marking}_a${str_alp}.txt \
+				LMs_${comtype}/perplexeties/scores/scores_corpus_${marking}_a${str_alp}_D${str_D}.txt
+				perplexity -a LMs_${comtype}/${language}_varikn_lm10_${marking}_a${str_alp}_D${str_D}.lm.gz \
+				-W wb.txt -t 2 LMs_${comtype}/perplexeties/devsets/dev_corpus_${marking}_a${str_alp}.txt \
+				LMs_${comtype}/perplexeties/scores/scores_dev_${marking}_a${str_alp}_D${str_D}.txt
 			fi
 			if [ $marking = "l" ]; then
-				perplexity -a LMs_{$comtype}/${language}_varikn_lm10_${marking}_a${str_alp}_D${str_D}.lm.gz \
-				-t 1 -X mb_p.txt LMs_{$comtype}/perplexeties/devsets/corpus_seg_${marking}_a${str_alp}.txt \
-				LMs_{$comtype}/perplexeties/scores/scores_corpus_${marking}_a${str_alp}_D${str_D}.txt
-                                perplexity -a LMs_{$comtype}/${language}_varikn_lm10_${marking}_a${str_alp}_D${str_D}.lm.gz \
-				-t 1 -X mb_p.txt LMs_{$comtype}/perplexeties/devsets/dev_corpus_${marking}_a${str_alp}.txt \
-				LMs_{$comtype}/perplexeties/scores/scores_dev_${marking}_a${str_alp}_D${str_D}.txt
+				perplexity -a LMs_${comtype}/${language}_varikn_lm10_${marking}_a${str_alp}_D${str_D}.lm.gz \
+				-t 1 -X mb_p.txt LMs_${comtype}/perplexeties/devsets/corpus_seg_${marking}_a${str_alp}.txt \
+				LMs_${comtype}/perplexeties/scores/scores_corpus_${marking}_a${str_alp}_D${str_D}.txt
+                                perplexity -a LMs_${comtype}/${language}_varikn_lm10_${marking}_a${str_alp}_D${str_D}.lm.gz \
+				-t 1 -X mb_p.txt LMs_${comtype}/perplexeties/devsets/dev_corpus_${marking}_a${str_alp}.txt \
+				LMs_${comtype}/perplexeties/scores/scores_dev_${marking}_a${str_alp}_D${str_D}.txt
 			fi
 			if [ $marking = "lr" ] || [ $marking = "r" ]; then
-				perplexity -a LMs_{$comtype}/${language}_varikn_lm10_${marking}_a${str_alp}_D${str_D}.lm.gz \
-				-t 1 -X mb_s.txt LMs_{$comtype}/perplexeties/devsets/corpus_seg_${marking}_a${str_alp}.txt \
-				LMs_{$comtype}/perplexeties/scores/scores_corpus_${marking}_a${str_alp}_D${str_D}.txt
-                                perplexity -a LMs_{$comtype}/${language}_varikn_lm10_${marking}_a${str_alp}_D${str_D}.lm.gz \
-				-t 1 -X mb_s.txt LMs_{$comtype}/perplexeties/devsets/dev_corpus_${marking}_a${str_alp}.txt \
-				LMs_{$comtype}/perplexeties/scores/scores_dev_${marking}_a${str_alp}_D${str_D}.txt
+				perplexity -a LMs_${comtype}/${language}_varikn_lm10_${marking}_a${str_alp}_D${str_D}.lm.gz \
+				-t 1 -X mb_s.txt LMs_${comtype}/perplexeties/devsets/corpus_seg_${marking}_a${str_alp}.txt \
+				LMs_${comtype}/perplexeties/scores/scores_corpus_${marking}_a${str_alp}_D${str_D}.txt
+                                perplexity -a LMs_${comtype}/${language}_varikn_lm10_${marking}_a${str_alp}_D${str_D}.lm.gz \
+				-t 1 -X mb_s.txt LMs_${comtype}/perplexeties/devsets/dev_corpus_${marking}_a${str_alp}.txt \
+				LMs_${comtype}/perplexeties/scores/scores_dev_${marking}_a${str_alp}_D${str_D}.txt
 			fi
 		done
 	done
