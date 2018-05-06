@@ -23,7 +23,7 @@ set -e -o pipefail -u
 # First the options that are passed through to run_ivector_common.sh
 # (some of which are also used in this script directly).
 stage=0
-nj=30
+nj=1
 
 train_set=train
 
@@ -46,8 +46,13 @@ common_egs_dir=
 . ./utils/parse_options.sh
 
 #own additions
+
+#This was to get four different
+#test_sets=$1
+#test_sets="dev eval dev_sme_"$test_sets" eval_sme_"$test_sets""
+
 test_sets=$1
-test_sets="dev eval dev_sme_"$test_sets" eval_sme_"$test_sets""
+test_sets="dev"
 nnet_lm_dir=$2
 tdnn_affix=$3  #affix for TDNN directory e.g. "1a" or "1b", in case we change the configuration.
 max_param_change=$4
