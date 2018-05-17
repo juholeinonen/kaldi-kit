@@ -4,14 +4,14 @@ from __future__ import print_function
 import os
 import sys
 
-def main(basepath):
+def main(basepath, corpus):
 
 
 	for filename in os.listdir(basepath):
-		if filename.endswith(".txt") and 'corpus' in filename:
+		if filename.endswith(".txt") and corpus in filename:
 			name_of_file = filename.split('_')
 			marking = name_of_file[2]
-			perp_name = "corpus_scores_" + marking +"_.txt"
+			perp_name = corpus + "_scores_" + marking +"_.txt"
 			params = name_of_file[3:]
 			params = ''.join(params)
 			params = params[:-4]
@@ -38,4 +38,4 @@ def main(basepath):
 							perplist_file.write("\n")
 
 if __name__ == "__main__":
-	main(sys.argv[1])
+	main(sys.argv[1], sys.argv[2])

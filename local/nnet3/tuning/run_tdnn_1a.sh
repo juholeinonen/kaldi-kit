@@ -52,7 +52,7 @@ common_egs_dir=
 #test_sets="dev eval dev_sme_"$test_sets" eval_sme_"$test_sets""
 
 test_sets=$1
-test_sets="dev"
+test_sets="seg-ak-dev seg-ak-test seg-er-dev seg-er-test"
 nnet_lm_dir=$2
 tdnn_affix=$3  #affix for TDNN directory e.g. "1a" or "1b", in case we change the configuration.
 max_param_change=$4
@@ -159,7 +159,7 @@ if [ $stage -le 14 ]; then
     (
       data_affix=$(echo $data | sed s/test_//)
       nj=$(wc -l <data/${data}_hires/spk2utt)
-      for lmtype in wb_best; do
+      for lmtype in lr_best; do
         graph_dir=$nnet_lm_dir
         steps/nnet3/decode.sh --nj $nj --cmd "$decode_cmd"  --num-threads 4 \
            --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_${data}_hires \
