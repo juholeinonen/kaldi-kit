@@ -25,26 +25,44 @@ set -e -o pipefail -u
 stage=0
 nj=30
 
-train_set=speechdat_train_cleaned
-test_sets="speechdat-dev"
-gmm=speechdat_tri3_cleaned        # this is the source gmm-dir that we'll use for alignments; it
+train_set=train
+
+gmm=tri3b        # this is the source gmm-dir that we'll use for alignments; it
                  # should have alignments for the specified training data.
 num_threads_ubm=20
 nnet3_affix=       # affix for exp dirs, e.g. it was _cleaned in tedlium.
-tdnn_affix=1a  #affix for TDNN directory e.g. "1a" or "1b", in case we change the configuration.
 
 # Options which are not passed through to run_ivector_common.sh
+
 train_stage=-10
-remove_egs=true
+remove_egs=false
 srand=0
 reporting_email=
 # set common_egs_dir to use previously dumped egs.
 common_egs_dir=
 
-. ./cmd.sh
+. cmd.sh
 . ./path.sh
 . ./utils/parse_options.sh
 
+#own additions
+
+#This was to get four different
+#test_sets=$1
+#test_sets="dev eval dev_sme_"$test_sets" eval_sme_"$test_sets""
+
+test_sets=$1
+test_sets="seg-ak-dev seg-ak-test seg-er-dev seg-er-test"
+nnet_lm_dir=$2
+tdnn_affix=$3  #affix for TDNN directory e.g. "1a" or "1b", in case we change the configuration.
+max_param_change=$4
+num_epochs=$5
+train_samples_per_iter=$6
+init_lrate=$7
+final_lrate=$8
+echo "$test_sets"
+echo "$nnet_lm_dir"
+echo "$tdnn_affix"
 if ! cuda-compiled; then
   cat <<EOF && exit 1
 This script is intended to be used with GPUs but you have not compiled Kaldi with CUDA
@@ -67,7 +85,7 @@ train_data_dir=data/${train_set}_sp_hires
 train_ivector_dir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires
 
 for f in $train_data_dir/feats.scp $train_ivector_dir/ivector_online.scp \
-    $gmm_dir/graph_tmp/HCLG.fst \
+    $gmm_dir/{graph,graph}/HCLG.fst \
     $ali_dir/ali.1.gz $gmm_dir/final.mdl; do
   [ ! -f $f ] && echo "$0: expected file $f to exist" && exit 1
 done
@@ -113,13 +131,13 @@ if [ $stage -le 13 ]; then
     --feat.online-ivector-dir=$train_ivector_dir \
     --feat.cmvn-opts="--norm-means=false --norm-vars=false" \
     --trainer.srand=$srand \
-    --trainer.max-param-change=2.0 \
-    --trainer.num-epochs=3 \
-    --trainer.samples-per-iter=400000 \
+    --trainer.max-param-change=$max_param_change \
+    --trainer.num-epochs=$num_epochs \
+    --trainer.samples-per-iter=$train_samples_per_iter \
     --trainer.optimization.num-jobs-initial=2 \
-    --trainer.optimization.num-jobs-final=10 \
-    --trainer.optimization.initial-effective-lrate=0.0015 \
-    --trainer.optimization.final-effective-lrate=0.00015 \
+    --trainer.optimization.num-jobs-final=1 \
+    --trainer.optimization.initial-effective-lrate=$init_lrate \
+    --trainer.optimization.final-effective-lrate=$final_lrate \
     --trainer.optimization.minibatch-size=256,128 \
     --egs.dir="$common_egs_dir" \
     --cleanup.remove-egs=$remove_egs \
@@ -140,19 +158,13 @@ if [ $stage -le 14 ]; then
   for data in $test_sets; do
     (
       data_affix=$(echo $data | sed s/test_//)
-#      nj=$(wc -l <data/${data}_hires/spk2utt)
-      nj=10
-      for lmtype in kielipankki; do
-        graph_dir=$gmm_dir/graph_${lmtype}
+      nj=$(wc -l <data/${data}_hires/spk2utt)
+      for lmtype in lr_best; do
+        graph_dir=$nnet_lm_dir
         steps/nnet3/decode.sh --nj $nj --cmd "$decode_cmd"  --num-threads 4 \
            --online-ivector-dir exp/nnet3${nnet3_affix}/ivectors_${data}_hires \
           ${graph_dir} data/${data}_hires ${dir}/decode_${lmtype}_${data_affix} || exit 1
       done
-#      steps/lmrescore.sh --cmd "$decode_cmd" data/lang_test_{tgpr,tg} \
-#        data/${data}_hires ${dir}/decode_{tgpr,tg}_${data_affix} || exit 1
-#      steps/lmrescore_const_arpa.sh --cmd "$decode_cmd" \
-#        data/lang_test_bd_{tgpr,fgconst} \
-#       data/${data}_hires ${dir}/decode_${lmtype}_${data_affix}{,_fg} || exit 1
     ) || touch $dir/.error &
   done
   wait

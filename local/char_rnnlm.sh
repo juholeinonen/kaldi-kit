@@ -1,7 +1,8 @@
 #!/bin/bash -e
 
 #SBATCH --partition gpu
-#SBATCH --time=8:00:00
+#SBATCH --time=12:00:00
+#SBATCH --gres=gpu:teslap100:1
 #SBATCH --mem=10G
 #SBATCH -o /scratch/work/jpleino1/log/char-rnnlm-%j.log
 #SBATCH -e /scratch/work/jpleino1/log/char-rnnlm-%j.log
@@ -31,6 +32,6 @@ theanolm train \
   --architecture lstm1500 \
   --learning-rate 0.1 \
   --optimization-method adagrad \
-  --validation-frequency 9 \
+  --validation-frequency 1 \
   --patience 0 \
   --cost cross-entropy
