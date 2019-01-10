@@ -10,9 +10,9 @@ set -e -o pipefail
 
 stage=0
 nj=30
-train_set=train   # you might set this to e.g. train.
-test_sets="seg-ak-dev seg-ak-test seg-er-dev seg-er-test"
-gmm=tri3b                # This specifies a GMM-dir from the features of the type you're training the system on;
+train_set=speechdat_train_cleaned   # you might set this to e.g. train.
+test_sets="speechdat-dev"
+gmm=speechdat_tri3_cleaned                # This specifies a GMM-dir from the features of the type you're training the system on;
                          # it should contain alignments for 'train_set'.
 
 num_threads_ubm=20
@@ -57,7 +57,7 @@ if [ $stage -le 2 ]; then
   # them overwrite each other.
   mfccdir=data/${train_set}_sp_hires/data
   if [[ $(hostname -f) == *.clsp.jhu.edu ]] && [ ! -d $mfccdir/storage ]; then
-    utils/create_split_dir.pl /export/b0{5,6,7,8}/$USER/kaldi-data/egs/wsj-$(date +'%m_%d_%H_%M')/s5/$mfccdir/storage $mfccdir/storage
+    utils/create_split_dir.pl /export/b0{5,6,7,8}/$USER/kaldi-data/mfcc/wsj-$(date +'%m_%d_%H_%M')/s5/$mfccdir/storage $mfccdir/storage
   fi
 
   for datadir in ${train_set}_sp ${test_sets}; do
@@ -120,7 +120,7 @@ if [ $stage -le 5 ]; then
   # valid for the non-'max2' data; the utterance list is the same.
   ivectordir=exp/nnet3${nnet3_affix}/ivectors_${train_set}_sp_hires
   if [[ $(hostname -f) == *.clsp.jhu.edu ]] && [ ! -d $ivectordir/storage ]; then
-    utils/create_split_dir.pl /export/b0{5,6,7,8}/$USER/kaldi-data/egs/wsj-$(date +'%m_%d_%H_%M')/s5/$ivectordir/storage $ivectordir/storage
+    utils/create_split_dir.pl /export/b0{5,6,7,8}/$USER/kaldi-data/ivectors/wsj-$(date +'%m_%d_%H_%M')/s5/$ivectordir/storage $ivectordir/storage
   fi
 
   # We now extract iVectors on the speed-perturbed training data .  With
@@ -149,8 +149,8 @@ if [ $stage -le 5 ]; then
   done
 fi
 
-if [ -f data/${train_set}_sp/feats.scp ] && [ $stage -le 8 ]; then
-  echo "$0: $feats already exists.  Refusing to overwrite the features "
+if [ -f data/${train_set}_sp/feats.scp ] && [ $stage -le 7 ]; then
+  echo "$0: data/${train_set}_sp/feats.scp already exists.  Refusing to overwrite the features "
   echo " to avoid wasting time.  Please remove the file and continue if you really mean this."
   exit 1;
 fi
@@ -180,7 +180,7 @@ if [ $stage -le 8 ]; then
   fi
   echo "$0: aligning with the perturbed low-resolution data"
   steps/align_fmllr.sh --nj $nj --cmd "$train_cmd" \
-    data/${train_set}_sp data/lang $gmm_dir $ali_dir
+    data/${train_set}_sp data/speechdat_lang $gmm_dir $ali_dir
 fi
 
 
