@@ -6,12 +6,12 @@ import sys
 for line in sys.stdin:
     parts = line.strip().split()
     new_parts = []
-    for p in parts[1:]:
+    for p in parts[:-1]:
         if (p.startswith('[') and p.endswith(']')) or (p.startswith('<') and p.endswith('>')) or p.startswith('!SIL'):
             new_parts.append(p)
         else:
             new_parts.append(" ".join(p))
-    print("{} {}".format(parts[0], ' _ '.join(new_parts)))
+    print("{} {}".format(' _ '.join(new_parts), parts[-1]))
     
     
 
