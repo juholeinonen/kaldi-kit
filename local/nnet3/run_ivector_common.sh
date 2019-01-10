@@ -15,7 +15,7 @@ test_sets="seg-ak-dev seg-ak-test seg-er-dev seg-er-test"
 gmm=tri3b                # This specifies a GMM-dir from the features of the type you're training the system on;
                          # it should contain alignments for 'train_set'.
 
-num_threads_ubm=32
+num_threads_ubm=20
 nnet3_affix=             # affix for exp/nnet3 directory to put iVector stuff in (e.g.
                          # in the tedlium recip it's _cleaned).
 
