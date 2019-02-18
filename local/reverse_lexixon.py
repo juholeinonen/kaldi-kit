@@ -28,7 +28,7 @@ def main(corpus_file):
 		dictionary_more_than_n.write(line)
 		for letter in line:
 			if letter != '+':
-				dictionary_more_than_n.write(u" " + letter)
+				dictionary_more_than_n.write(u" " + 'r' + letter)
 		dictionary_more_than_n.write(u"\n")
 	
 	dictionary_more_than_n.close()
