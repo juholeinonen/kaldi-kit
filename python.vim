@@ -1,3 +1,5 @@
+nnoremap <buffer> H :<C-u>execute "!pydoc3 " . expand("<cword>")<CR>
+
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
