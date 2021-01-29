@@ -17,6 +17,7 @@ def main(elan_file_path):
     utt2spk_name = os.path.join(abspath_to, "utt2spk")
     spk2utt_name = os.path.join(abspath_to, "spk2utt")
     segments_name = os.path.join(abspath_to, "segments")
+    reco2file_name = os.path.join(abspath_to, "reco2file_and_channel")
     wav_basepath = "data/src/wavs"
     wav_name = os.path.join(abspath_to, "wav.scp")
     
@@ -27,6 +28,7 @@ def main(elan_file_path):
         open(utt2spk_name, 'w', encoding="utf-8") as utt2spk,\
         open(spk2utt_name, 'w', encoding="utf-8") as spk2utt,\
         open(segments_name, 'w', encoding="utf-8") as segments,\
+        open(reco2file_name, 'w', encoding="utf-8") as reco2file,\
         open(wav_name, 'w', encoding="utf-8") as wavs:
 
         for tier in eaf.tiers:
@@ -42,6 +44,7 @@ def main(elan_file_path):
             line_s = [utterance, filename, str(column[0]/1000.0), str(column[1]/1000.0)]
 
             segments.write(" ".join(line_s) + "\n")
+            reco2file.write(filename + " " + filename + "\n")
             utt2spk.write(utterance + " " + utterance + "\n")
             spk2utt.write(utterance + " " + utterance + "\n")
             line_t = column[2]
