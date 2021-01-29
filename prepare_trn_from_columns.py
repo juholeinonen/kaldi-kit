@@ -2,6 +2,7 @@
 
 import sys
 import re
+import os
 #import subprocesses
 
 def main(intermediate_file):
@@ -16,8 +17,12 @@ def main(intermediate_file):
             "]" : "",
             "§" : ""
             }
+    abspath = os.path.abspath(intermediate_file)
+    abspath_to, full_filename = os.path.split(abspath)
+    filename, file_ext = os.path.splitext(full_filename)
+    trn_name = os.path.join(abspath_to, filename + "_cleaned.trn")
     with open(intermediate_file, "r", encoding="utf-8") as inter,\
-            open("truetrn.trn", 'w', encoding='utf-8') as trnfile:
+            open(trn_name, 'w', encoding='utf-8') as trnfile:
         for line in inter:
             start, end, *words = line.split()
             words_str = " ".join(words) + " "
@@ -27,8 +32,8 @@ def main(intermediate_file):
         trn = re.sub(' +', ' ', trn)
         # Bit over zealous (ge) OK but (=ge) is not
         trn = re.sub(r'\([^)]*\)', '', trn)
-        trn = trn.lower()
-        trnfile.write(trn)
+        trn = trn.lower().strip()
+        trnfile.write(filename + " " + trn + "\n")
 
 if __name__ == "__main__":
     main(sys.argv[1])
