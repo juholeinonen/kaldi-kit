@@ -44,7 +44,6 @@ def main(elan_file_path):
             line_s = [utterance, filename, str(column[0]/1000.0), str(column[1]/1000.0)]
 
             segments.write(" ".join(line_s) + "\n")
-            reco2file.write(filename + " " + filename + "\n")
             utt2spk.write(utterance + " " + utterance + "\n")
             spk2utt.write(utterance + " " + utterance + "\n")
             line_t = column[2]
@@ -56,6 +55,7 @@ def main(elan_file_path):
             line_t = re.sub(' +', ' ', line_t)
             trn.write(utterance + " " + line_t + " " + "\n")
         wavs.write(filename + " " + wav_basepath + "/" + filename + ".wav" + "\n")
+        reco2file.write(filename + " " + filename + " A\n")
 
 if __name__ == "__main__":
     main(sys.argv[1])
